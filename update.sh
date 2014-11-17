@@ -14,4 +14,11 @@ cd ~/host/
 
 for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do git checkout $(basename "$branch"); mkdir -p /srv/clones/$(basename "$branch"); git archive $(basename "$branch") | tar -xC /srv/clones/$(basename "$branch"); cp ~/default /etc/apache2/sites-enabled/$(basename "$branch").conf; perl -p -i -e "s/MAGICALPONY/$(basename "$branch")/g" /etc/apache2/sites-enabled/$(basename "$branch").conf; done
 
+echo "<h1>And we're done!</h1>" > /var/www/index.html
+
+echo "<h2>" >> /var/www/index.html
+echo `date` >> /var/www/index.html
+echo "</h2>" >> /var/www/index.html
+
 service apache2 restart
+
