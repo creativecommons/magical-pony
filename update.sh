@@ -4,7 +4,7 @@
 
 echo "<h1>Updating the Magical Pony</h1>" > /var/www/index.html
 
-echo "<h2"> >> /var/www/index.html
+echo "<h2>" >> /var/www/index.html
 echo `date` >> /var/www/index.html
 echo "</h2>" >> /var/www/index.html
 
