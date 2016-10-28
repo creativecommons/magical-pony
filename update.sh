@@ -16,7 +16,8 @@ git pull
 
 for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`;
 do
-    git checkout $(basename "$branch")
+    git checkout -f $(basename "$branch")
+    git reset --hard
     git pull
     mkdir -p /srv/clones/$(basename "$branch")
     git archive $(basename "$branch") \
@@ -30,9 +31,10 @@ popd
 
 echo "<h1>And we're done!</h1>" >> /var/www/index.html
 
+rm -rf /srv/old-clones/
+
 echo "<h2>" >> /var/www/index.html
 echo `date` >> /var/www/index.html
 echo "</h2>" >> /var/www/index.html
 
 service apache2 restart
-
