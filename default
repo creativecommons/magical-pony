@@ -35,8 +35,8 @@
     Alias /cc.engine-cache /srv/creativecommons.org/python_env/cache
     
     # Redirect all /license to /choose before we go any deeper
-    RewriteRule ^/choose$ ${proto}://${host}/choose/ [L,R=301]
-    RewriteRule ^/license$ ${proto}://${host}/choose/ [L,R=301]
+    RewriteRule ^/choose$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/choose/ [L,R=301]
+    RewriteRule ^/license$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/choose/ [L,R=301]
     
     # Fixes this repercussions of this bug:
     # http://code.creativecommons.org/issues/issue898
@@ -44,8 +44,8 @@
     
     # Legalcode rewrites
 	# FIXME: eval whether we should use the LHS as the actual file structure so we don't need the rewrites
-    RewriteRule ^/legalcode ${proto}://${host}/ [L,R=301]
-    RewriteRule .*legalcode/$ ${proto}://${host}/ [L,R=301]
+    RewriteRule ^/legalcode %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
+    RewriteRule .*legalcode/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
     RewriteRule ^/licenses/(.*)sampling\+/1.0/(.*)/legalcode$ /legalcode/$1samplingplus_1.0_$2.html [L] 
     RewriteRule ^/licenses/(.*)sampling\+/1.0/legalcode$ /legalcode/$1samplingplus_1.0.html [L] 
     RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/(.*)/legalcode\.([A-Za-z-]+)$ /legalcode/$1_$2_$3_$4.html [L]
@@ -66,7 +66,7 @@
     RewriteRule ^/licenses/publicdomain/rdf$ /license_rdf/creativecommons.org_licenses_publicdomain_.rdf [L,T=application/rdf+xml]
     RewriteRule ^/(publicdomain|licenses)/(.*)/([0-9]\.[0-9])/license_rdf$ /license_rdf/creativecommons.org_$1_$2_$3_.rdf [L,T=application/rdf+xml]
     RewriteRule ^/(publicdomain|licenses)/(.*)/([0-9]\.[0-9])/rdf$ /license_rdf/creativecommons.org_$1_$2_$3_.rdf [L,T=application/rdf+xml]
-    RewriteRule .*rdf/$ ${proto}://${host}/ [L,R=301]
+    RewriteRule .*rdf/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
     
     # See if deed is cached before sending to cc.engine
 	# FIXME: eval memcache as an alternative?
@@ -75,115 +75,115 @@
     RewriteRule ^/licenses/(.*) /cc.engine-cache/licenses/$1 [L,PT]
     
 	# FIXME: do we really need rewrites for other licenses like GPL, etc?
-    RewriteRule (.*)licence(.*) ${proto}://${host}$1license$2 [L,R=301]
+    RewriteRule (.*)licence(.*) %{SERVER_PROTOCOL}://%{HTTP_HOST}$1license$2 [L,R=301]
     RewriteRule ^/(license|choose|characteristic|publicdomain)$ /$1/ [L,R=301]
     RewriteRule ^/(license|choose|characteristic|publicdomain)/(.*) /ccengine-fcgi/$1/$2 [PT,L]
-    RewriteRule ^/licenses$ ${proto}://${host}/licenses/ [L,R=301]
-    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/([a-z][a-z])$ ${proto}://${host}/licenses/$1/$2/$3/ [L,R=301]
-    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/([Ss]cotland)$ ${proto}://${host}/licenses/$1/$2/scotland/ [L,R=301]
-    RewriteRule ^/licenses/(.*)([0-9])$ ${proto}://${host}/licenses/$1$2/ [L,R=301]
-    RewriteRule ^/licenses/(.*)/2.0/ar/(.*)$ ${proto}://${host}/licenses/$1/2.5/ar/$2 [L,R=301]
+    RewriteRule ^/licenses$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/ [L,R=301]
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/([a-z][a-z])$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/$1/$2/$3/ [L,R=301]
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/([Ss]cotland)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/$1/$2/scotland/ [L,R=301]
+    RewriteRule ^/licenses/(.*)([0-9])$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/$1$2/ [L,R=301]
+    RewriteRule ^/licenses/(.*)/2.0/ar/(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/$1/2.5/ar/$2 [L,R=301]
     RewriteRule ^/licenses/BSD/legalcode http://opensource.org/licenses/bsd-license.php [L,R]
-    RewriteRule ^/licenses/by-nc-nd/2.0/deed-music$ ${proto}://${host}/licenses/by-nc-nd/2.0/ [L,R=301]
-    RewriteRule ^/licenses/by-nc-nd/1.0/legalcode$ ${proto}://${host}/licenses/by-nd-nc/1.0/legalcode [L,R=301]
-    RewriteRule ^/licenses/by-nc-nd/1.0/$ ${proto}://${host}/licenses/by-nd-nc/1.0/ [L,R=301]
-    RewriteRule ^/licenses/nc-nd/1.0/legalcode$ ${proto}://${host}/licenses/nd-nc/1.0/legalcode [L,R=301]
-    RewriteRule ^/licenses/nc-nd/1.0/$ ${proto}://${host}/licenses/nd-nc/1.0/ [L,R=301]
-    RewriteRule ^/licenses/(.*)/deed.(.*)/$ ${proto}://${host}/ [L,R=301]
+    RewriteRule ^/licenses/by-nc-nd/2.0/deed-music$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nc-nd/2.0/ [L,R=301]
+    RewriteRule ^/licenses/by-nc-nd/1.0/legalcode$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nd-nc/1.0/legalcode [L,R=301]
+    RewriteRule ^/licenses/by-nc-nd/1.0/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nd-nc/1.0/ [L,R=301]
+    RewriteRule ^/licenses/nc-nd/1.0/legalcode$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/nd-nc/1.0/legalcode [L,R=301]
+    RewriteRule ^/licenses/nc-nd/1.0/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/nd-nc/1.0/ [L,R=301]
+    RewriteRule ^/licenses/(.*)/deed.(.*)/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
     RewriteRule ^/licenses/eldred-pd/$ http://web.archive.org/web/20030115160926/http://www.creativecommons.org/licenses/eldred-pd [L,R=301]
     RewriteRule ^/licenses/GPL/2.0/rdf$ http://www.gnu.org/licenses/gpl-2.0.rdf [R=301,L]
     RewriteRule ^/licenses/LGPL/2.1/rdf$ http://www.gnu.org/licenses/lgpl-2.1.rdf [R=301,L]
-    RewriteRule ^/licenses/meet-the-licenses$ ${proto}://${host}/licenses/ [L,R=301]
+    RewriteRule ^/licenses/meet-the-licenses$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/ [L,R=301]
     RewriteRule ^/licenses/MIT/legalcode http://opensource.org/licenses/mit-license.php [L,R]
-    RewriteRule ^/licenses/publicdomain/1.0(.*)$ ${proto}://${host}/licenses/publicdomain/ [L,R=301]
+    RewriteRule ^/licenses/publicdomain/1.0(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/publicdomain/ [L,R=301]
     RewriteRule ^/licenses/zero/1.0/(.*) /publicdomain/zero/1.0/$1 [L,R=301]
-    RewriteRule ^/licesne(.*)$ ${proto}://${host}/choose$1 [L,R=301]
-    RewriteRule ^/public_domain ${proto}://${host}/publicdomain/ [R=301,L]
+    RewriteRule ^/licesne(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/choose$1 [L,R=301]
+    RewriteRule ^/public_domain %{SERVER_PROTOCOL}://%{HTTP_HOST}/publicdomain/ [R=301,L]
     RewriteRule ^/licenses/(.*) /ccengine-fcgi/licenses/$1 [PT,L]
 
     #----------
     # Old content/URLs going to new places
     #----------
 
-    RewriteRule ^/200.* ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule ^/aboutus ${proto}://%{SERVER_NAME}/about [L,R=301]
-    RewriteRule ^/about/ccvideo ${proto}://%{SERVER_NAME}/videos/ [L,R=301]
-    RewriteRule ^/about/license$ ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule ^/about/licenses/?$ ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule ^/about/licenses/meet-the-licenses/?$ ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule /about/licenses/sampling ${proto}://%{SERVER_NAME}/about/licenses/ [L,R=301]
+    RewriteRule ^/200.* %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/aboutus %{SERVER_PROTOCOL}://%{SERVER_NAME}/about [L,R=301]
+    RewriteRule ^/about/ccvideo %{SERVER_PROTOCOL}://%{SERVER_NAME}/videos/ [L,R=301]
+    RewriteRule ^/about/license$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule ^/about/licenses/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule ^/about/licenses/meet-the-licenses/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule /about/licenses/sampling %{SERVER_PROTOCOL}://%{SERVER_NAME}/about/licenses/ [L,R=301]
     Rewriterule ^/about/people/alumni http://web.archive.org/*/http://creativecommons.org/about/people [L,R=301]
-    Rewriterule ^/about/people/?$ ${proto}://%{SERVER_NAME}/staff [L,R=301]
-    Rewriterule ^/about/people/board/?$ ${proto}://%{SERVER_NAME}/board [L,R=301]
-    Rewriterule ^/about/people/fellows/?$ ${proto}://%{SERVER_NAME}/fellows [L,R=301]
-    Rewriterule ^/about/opportunities/?$ ${proto}://%{SERVER_NAME}/opportunities [L,R=301]
-    RewriteRule /about/sampling ${proto}://%{SERVER_NAME}/retiredlicenses [L,R=301]
-    RewriteRule /about/sampling-movie ${proto}://%{SERVER_NAME}/about/licenses/ [L,R=301]
-    RewriteRule ^/about/videos$ ${proto}://%{SERVER_NAME}/videos/ [L,R=301]
-    RewriteRule ^/about/what-is-cc/?$ ${proto}://%{SERVER_NAME}/about [L,R=301]
-    RewriteRule ^/about/who-uses-cc/?$ ${proto}://%{SERVER_NAME}/who-uses-cc [L,R=301]
-    RewriteRule .*/archive/archive.* ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule ^/asharedculture/?$ ${proto}://%{SERVER_NAME}/videos/a-shared-culture [L,R=301]
+    Rewriterule ^/about/people/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/staff [L,R=301]
+    Rewriterule ^/about/people/board/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/board [L,R=301]
+    Rewriterule ^/about/people/fellows/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/fellows [L,R=301]
+    Rewriterule ^/about/opportunities/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/opportunities [L,R=301]
+    RewriteRule /about/sampling %{SERVER_PROTOCOL}://%{SERVER_NAME}/retiredlicenses [L,R=301]
+    RewriteRule /about/sampling-movie %{SERVER_PROTOCOL}://%{SERVER_NAME}/about/licenses/ [L,R=301]
+    RewriteRule ^/about/videos$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/videos/ [L,R=301]
+    RewriteRule ^/about/what-is-cc/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/about [L,R=301]
+    RewriteRule ^/about/who-uses-cc/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/who-uses-cc [L,R=301]
+    RewriteRule .*/archive/archive.* %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/asharedculture/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/videos/a-shared-culture [L,R=301]
     RewriteRule ^/audio/([-a-z0-9]+)/?$ /index.php?category_name=audio&name=$1 [QSA,L]
-    RewriteRule .*/author$ ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule ^/choose/devnations$ ${proto}://%{SERVER_NAME}/retiredlicenses [L,R=301]
+    RewriteRule .*/author$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/choose/devnations$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/retiredlicenses [L,R=301]
     RewriteRule ^/commoners(.*)?$ /interviews$1 [L,R]
-    RewriteRule ^/concepts/examples$ ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule ^/concepts/(.*)$ ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule ^/counter.* ${proto}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/concepts/examples$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule ^/concepts/(.*)$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule ^/counter.* %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
     RewriteRule ^(.*)CVS.*$ $1 [L,R=301]
-    RewriteRule ^/discuss/?$ ${proto}://%{SERVER_NAME}/contact#discuss [L,NE,R=301]
-    RewriteRule ^/draft/(.*)$ ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule /drafts/wiki_0.5$  ${proto}://%{SERVER_NAME}/licenses/by-sa/2.5/ [L,R=301]
+    RewriteRule ^/discuss/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/contact#discuss [L,NE,R=301]
+    RewriteRule ^/draft/(.*)$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule /drafts/wiki_0.5$  %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/by-sa/2.5/ [L,R=301]
     RewriteRule ^/education/([-a-z0-9]+)/?$ /index.php?category_name=education&name=$1 [L,QSA]
-    RewriteRule ^/_.* ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule ^/features(.*)$ ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule ^/fellows ${proto}://%{SERVER_NAME}/staff [L,R=301]
+    RewriteRule ^/_.* %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/features(.*)$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule ^/fellows %{SERVER_PROTOCOL}://%{SERVER_NAME}/staff [L,R=301]
     RewriteRule ^/find.*$ http://search.creativecommons.org/ [L,R=301]
     RewriteRule ^/freeculture.*$ http://lessig.org/freeculture [L,R=301]
     RewriteRule ^/getcontent.*$ http://search.creativecommons.org/ [L,R=301]
-    RewriteRule http ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule ^/http.* ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule ^/icon/(.*)$ ${proto}://%{SERVER_NAME}/icons/$1 [L,R=301]
+    RewriteRule http %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/http.* %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/icon/(.*)$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/icons/$1 [L,R=301]
     RewriteRule ^/image/([-a-z0-9]+)/?$ /index.php?category_name=image&name=$1 [QSA,L]
-    RewriteRule ^/images.*/$ ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule index_html ${proto}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/images.*/$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule index_html %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
     RewriteRule ^/interviews/([-a-z0-9]+)/?$ /index.php?category_name=interviews&name=$1 [QSA,L]
-    RewriteRule /learn/aboutus/$ ${proto}://%{SERVER_NAME}/about/history [L,R=301]
-    RewriteRule /learn/aboutus/people$ ${proto}://%{SERVER_NAME}/about/people [L,R=301]
-    RewriteRule /learn/artistscorners/educators$ ${proto}://%{SERVER_NAME}/education [L,R=301]
+    RewriteRule /learn/aboutus/$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/about/history [L,R=301]
+    RewriteRule /learn/aboutus/people$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/about/people [L,R=301]
+    RewriteRule /learn/artistscorners/educators$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/education [L,R=301]
 
     RewriteRule /taa-grant-program$ http://open4us.org/ [L,R=301]
 
-    RewriteRule /learn/artistscorners/$ ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule /learn/artistscorners/filmmakers$ ${proto}://%{SERVER_NAME}/video [L,R=301]
-    RewriteRule /learn/artistscorners/musicians$ ${proto}://%{SERVER_NAME}/audio [L,R=301]
-    RewriteRule /learn/artistscorners/photographers$  ${proto}://%{SERVER_NAME}/image [L,R=301]
-    RewriteRule /learn/artistscorners/writers$ ${proto}://%{SERVER_NAME}/text [L,R=301]
+    RewriteRule /learn/artistscorners/$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule /learn/artistscorners/filmmakers$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/video [L,R=301]
+    RewriteRule /learn/artistscorners/musicians$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/audio [L,R=301]
+    RewriteRule /learn/artistscorners/photographers$  %{SERVER_PROTOCOL}://%{SERVER_NAME}/image [L,R=301]
+    RewriteRule /learn/artistscorners/writers$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/text [L,R=301]
     RewriteRule ^/learn/features/(.*)$ http://search.creativecommons.org/ [L,R=301]
     RewriteRule ^/learn/getcontent$ http://search.creativecommons.org/ [L,R=301]
-    RewriteRule /learn/legal/$ ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule /learn/licenses ${proto}://%{SERVER_NAME}/licenses/ [L,R=301]
-    RewriteRule /learn/$ ${proto}://%{SERVER_NAME}/about [L,R=301]
-    RewriteRule ^/learnmore/?$ ${proto}://%{SERVER_NAME}/about [L,R=301]
-    RewriteRule ^/legal/.*$ ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule .*/login_form$ ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule .*/manage.*$ ${proto}://%{SERVER_NAME}/ [L,R=301]
-    RewriteRule ^/media-that-matters-video/?$ ${proto}://%{SERVER_NAME}/videos/media-that-matters [L,R=301]
-    RewriteRule ^/news/blog/$ ${proto}://%{SERVER_NAME}/weblog [L,R=301]
-    RewriteRule ^/news/pressarchive.html$ ${proto}://%{SERVER_NAME}/weblog [L,R=301]
-    RewriteRule ^/news/pressarchive$ ${proto}://%{SERVER_NAME}/weblog [L,R=301]
-    RewriteRule ^/news/pressreleases ${proto}://%{SERVER_NAME}/press-releases [L,R=301]
-    RewriteRule ^/policy$ ${proto}://%{SERVER_NAME}/policies [L,R=301]
-    RewriteRule ^/press/.*$ ${proto}://%{SERVER_NAME}/weblog [L,R=301]
-    RewriteRule ^/press$ ${proto}://%{SERVER_NAME}/weblog [L,R=301]
-    RewriteRule ^/pressarchive$ ${proto}://%{SERVER_NAME}/weblog [L,R=301]
+    RewriteRule /learn/legal/$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule /learn/licenses %{SERVER_PROTOCOL}://%{SERVER_NAME}/licenses/ [L,R=301]
+    RewriteRule /learn/$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/about [L,R=301]
+    RewriteRule ^/learnmore/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/about [L,R=301]
+    RewriteRule ^/legal/.*$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule .*/login_form$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule .*/manage.*$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/ [L,R=301]
+    RewriteRule ^/media-that-matters-video/?$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/videos/media-that-matters [L,R=301]
+    RewriteRule ^/news/blog/$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/weblog [L,R=301]
+    RewriteRule ^/news/pressarchive.html$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/weblog [L,R=301]
+    RewriteRule ^/news/pressarchive$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/weblog [L,R=301]
+    RewriteRule ^/news/pressreleases %{SERVER_PROTOCOL}://%{SERVER_NAME}/press-releases [L,R=301]
+    RewriteRule ^/policy$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/policies [L,R=301]
+    RewriteRule ^/press/.*$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/weblog [L,R=301]
+    RewriteRule ^/press$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/weblog [L,R=301]
+    RewriteRule ^/pressarchive$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/weblog [L,R=301]
     RewriteRule ^/presskit/(.+)\.([a-z]+)$ http://mirrors.creativecommons.org/presskit/$1.$2 [L,R=301]
-    RewriteRule ^/presskit ${proto}://%{SERVER_NAME}/about/press [L,R=301]
+    RewriteRule ^/presskit %{SERVER_PROTOCOL}://%{SERVER_NAME}/about/press [L,R=301]
     RewriteRule /projects/founderscopyright http://wiki.creativecommons.org/Founders_Copyright [L,R=301]
     #RewriteRule /\sprojects/founderscopyright http://wiki.creativecommons.org/Founders_Copyright [L,R=301]
-    RewriteRule /projects/sampling ${proto}://%{SERVER_NAME}/retiredlicenses [L,R=301]
-    RewriteRule /support/video$ ${proto}://%{SERVER_NAME}/videos [L,R=301]
+    RewriteRule /projects/sampling %{SERVER_PROTOCOL}://%{SERVER_NAME}/retiredlicenses [L,R=301]
+    RewriteRule /support/video$ %{SERVER_PROTOCOL}://%{SERVER_NAME}/videos [L,R=301]
     RewriteRule ^/text/([-a-z0-9]+)/?$ /index.php?category_name=text&name=$1 [L,QSA]
     RewriteRule ^/video/([-a-z0-9]+)/?$ /index.php?category_name=video&name=$1 [L,QSA]
 
@@ -269,8 +269,8 @@
     #----------
     
     # Map backwardly named license types to their actual location
-    RewriteRule ^/licenses/by-nc-nd/1.0/(.*)$ ${proto}://${host}/licenses/by-nd-nc/1.0/$1 [L,R=301]
-    RewriteRule ^/licenses/by-nd-nc/2.0/(.*)$ ${proto}://${host}/licenses/by-nc-nd/2.0/$1 [L,R=301]
+    RewriteRule ^/licenses/by-nc-nd/1.0/(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nd-nc/1.0/$1 [L,R=301]
+    RewriteRule ^/licenses/by-nd-nc/2.0/(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nc-nd/2.0/$1 [L,R=301]
     
     # Map the namespace document and schema URLs
 	# FIXME: are symlinks cleaner?
@@ -280,7 +280,7 @@
     # Logins should always be HTTPS
     RewriteCond %{HTTPS} off
     RewriteCond %{REQUEST_URI} ^/wp-login\.php.*
-    RewriteRule ^/(.*)$ https://${host}/$1 [R=301,NE,L]
+    RewriteRule ^/(.*)$ https://%{HTTP_HOST}/$1 [R=301,NE,L]
 
     # Redirect creativecommons.ru to the RU international page
     ServerAlias creativecommons.ru www.creativecommons.ru
@@ -291,16 +291,16 @@
     # Redirect opened.creativecommons.org to creativecommons.org/education
     ServerAlias opened.creativecommons.org
     RewriteCond %{HTTP_HOST} =opened.creativecommons.org
-    RewriteRule ^.*$ ${proto}://creativecommons.org/education [L,R=301]
+    RewriteRule ^.*$ %{SERVER_PROTOCOL}://creativecommons.org/education [L,R=301]
 
     # Redirect www.CC.org to CC.org
     RewriteCond %{HTTP_HOST} =www.creativecommons.org
-    RewriteRule ^/(.*)$ ${proto}://${host}/$1 [L,R=301]
+    RewriteRule ^/(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/$1 [L,R=301]
 
     # It's creativecommons.org, not .com
     RewriteCond %{HTTP_HOST} =creativecommons.com [OR]
     RewriteCond %{HTTP_HOST} =www.creativecommons.com
-    RewriteRule ^.*$ ${proto}://${host}/ [L,R=301]
+    RewriteRule ^.*$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
 
     #----------
     # WordPress rules here instead of .htaccess
@@ -322,7 +322,7 @@
     # Catch any requests for the general /weblog/archive and also to the
     # archives for any particular year/month and then redirect the client
     # to the new-style permalink
-    RewriteRule ^/weblog/archive(/?.*)$ ${proto}://${host}/weblog$1 [L,R=301]
+    RewriteRule ^/weblog/archive(/?.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/weblog$1 [L,R=301]
     
     # Catch any old permalinks that point to long, ugly post names.  The
     # CC Permalink Mapper will get this request and redirect the user accordingly.
@@ -338,7 +338,7 @@
     # NOTE: disable in production - for staging sites only (so media URLs will work)
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
-    RewriteRule ^/(wp-content/uploads/.*)$ ${proto}://creativecommons.org/$1 [L]
+    RewriteRule ^/(wp-content/uploads/.*)$ %{SERVER_PROTOCOL}://creativecommons.org/$1 [L]
     
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
