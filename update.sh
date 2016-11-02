@@ -35,12 +35,10 @@ do
        "/etc/apache2/sites-enabled/${branchname}".conf
     perl -p -i -e "s/MAGICALPONY/${branchname}/g" \
          "/etc/apache2/sites-enabled/${branchname}".conf
-    hash="$(git log ${branchname} -1 --format=\"%H\")"
-    echo "<h3>${branchname}</h3><p><b>Commit:</b> <a href=\"" \
-	 "https://github.com/creativecommons/creativecommons.org/commit/" \
-	 "${hash}\">${hash}</a></p><p>" \
+    hash=$(git log ${branchname} -1 --format="%H")
+    echo "<h3>${branchname}</h3><p><b>Commit:</b> <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\"\>${hash}</a></p>" \
 	 >> "${statusfile}"
-    git log ${branchname} -1 --format="%s</p>" >> "${statusfile}"
+    git log ${branchname} -1 --format="<p>%s</p>" >> "${statusfile}"
 done
 
 popd
