@@ -356,7 +356,8 @@
     </Location>
 
     RewriteEngine On
-    RewriteLog "/var/log/apache2/rewrite.log"
-    RewriteLogLevel 3
+    #RewriteLog "/var/log/apache2/rewrite.log"
+    #RewriteLogLevel 3
+    LogLevel alert rewrite:trace3
 
 </VirtualHost>

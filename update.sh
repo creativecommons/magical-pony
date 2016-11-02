@@ -24,23 +24,23 @@ echo "<h2>Branches</h2>" >> "${statusfile}"
 
 for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`;
 do
-    git checkout -f $(basename "$branch")
+    branchname=$(basename "$branch")
+    git checkout -f ${branchname}
     git reset --hard
     git pull
-    mkdir -p /srv/clones/$(basename "$branch")
-    git archive $(basename "$branch") \
-        | tar -xC /srv/clones/$(basename "$branch")
+    mkdir -p "/srv/clones/${branchname}"
+    git archive "${branchname}" \
+        | tar -xC "/srv/clones/${branchname}"
     cp "${resourcedir}/default" \
-       /etc/apache2/sites-enabled/$(basename "$branch").conf
-    perl -p -i -e "s/MAGICALPONY/$(basename "$branch")/g" \
-         /etc/apache2/sites-enabled/$(basename "$branch").conf
-    echo "<h3>$(basename "$branch")</h3><p><b>Commit:</b> " \
+       "/etc/apache2/sites-enabled/${branchname}".conf
+    perl -p -i -e "s/MAGICALPONY/${branchname}/g" \
+         "/etc/apache2/sites-enabled/${branchname}".conf
+    hash="$(git log ${branchname} -1 --format=\"%H\")"
+    echo "<h3>${branchname}</h3><p><b>Commit:</b> <a href=\"" \
+	 "https://github.com/creativecommons/creativecommons.org/commit/" \
+	 "${hash}\">${hash}</a></p><p>" \
 	 >> "${statusfile}"
-    git log $(basename "$branch") -1 --format="%H" >> "${statusfile}"
-    echo "</p><p>" >> "${statusfile}"
-    git log $(basename "$branch") -1 --format="%s" >> "${statusfile}"
-    echo "</p>" >> "${statusfile}"
-    
+    git log ${branchname} -1 --format="%s</p>" >> "${statusfile}"
 done
 
 popd
