@@ -1,10 +1,12 @@
 #!/bin/bash
 
-# I am really sorry for anyone who has to work with this, including myself and Kat.
+# I am really sorry for anyone who has to work with this, including myself and Kat. - mattl
 
-workdir='~/host'
-resourcedir='~/magical-pony'
+workdir="${HOME}/host"
+resourcedir="${HOME}/magical-pony"
 statusfile='/var/www/html/index.html'
+
+mkdir -p "${workdir}"
 
 echo "<h1>Updating the Magical Pony</h1>" > "${statusfile}"
 
