@@ -22,9 +22,12 @@ git pull
 
 echo "<h2>Branches</h2>" >> "${statusfile}"
 
+hostnames="-d legal.creativecommons.org"
+
 for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`;
 do
     branchname=$(basename "$branch")
+    hostnames="-d ${branchname}.legal.creativecommons.org ${hostnames}"
     git checkout -f ${branchname}
     git reset --hard
     git pull
@@ -42,6 +45,14 @@ do
 done
 
 popd
+
+# Get any new certificates, incorporate old one, refresh expiring, install any
+# new http->https redirects, and do so quietly and automatically.
+
+certbot run --apache --agree-tos -m webmaster@creativecommons.org \
+        --non-interactive --quiet \
+        --expand --keep-until-expiring --redirect \
+        ${hostnames}
 
 echo "<h1>And we're done!</h1>" >> "${statusfile}"
 

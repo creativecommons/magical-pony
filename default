@@ -2,10 +2,6 @@
     #UseCanonicalName Off
 
     ServerName MAGICALPONY.legal.creativecommons.org
-    #ServerAlias legal.creativecommons.org
-
-
-    #Use CCVHost %{HTTP_HOST} http /srv/clones/%1/ /var/log/apache2/
 
     VirtualDocumentRoot /srv/clones/MAGICALPONY/docroot/
     DocumentRoot /srv/clones/MAGICALPONY/docroot/
@@ -343,7 +339,6 @@
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
     RewriteRule . /index.php [L]
-
 
     <Location />
     AuthType Basic
