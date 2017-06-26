@@ -50,7 +50,8 @@
     RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode$ /legalcode/$1_$2.html [L] 
     RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode\.txt$ /legalcode/$1_$2.txt [L] 
     RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode$ /legalcode/$1_$2.html [L] 
-    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.([a-z][a-z])$ /legalcode/$1_$2_$3.html [L] 
+    # -Aaa is for Chinese
+    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.([a-z][a-z](-[A-Z][a-z][a-z][a-z])?)$ /legalcode/$1_$2_$3.html [L] 
     RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.txt$ /legalcode/$1_$2.txt [L]
     
     # License RDF rewrites
