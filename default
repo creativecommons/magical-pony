@@ -68,7 +68,7 @@
     # See if deed is cached before sending to cc.engine
 	# FIXME: eval memcache as an alternative?
     RewriteCond %{REQUEST_URI} ^/licenses
-    RewriteCond ${dir}/python_env/cache/%{REQUEST_FILENAME} -s
+    RewriteCond /srv/clones/MAGICALPONY/python_env/cache/%{REQUEST_FILENAME} -s
     RewriteRule ^/licenses/(.*) /cc.engine-cache/licenses/$1 [L,PT]
     
 	# FIXME: do we really need rewrites for other licenses like GPL, etc?
