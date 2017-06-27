@@ -9,8 +9,8 @@ checkoutdir="${workdir}/${reponame}"
 resourcedir="${HOME}/magical-pony"
 statusfile='/var/www/html/index.html'
 
-mkdir -p "${workdir}"
 rm -rf "${checkoutdir}"
+mkdir -p "${checkoutdir}"
 
 echo "<h1>Updating the Magical Pony</h1>" > "${statusfile}"
 
