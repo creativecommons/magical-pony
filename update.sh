@@ -39,7 +39,7 @@ do
     mkdir -p "/srv/clones/${branchname}"
     git archive "${branchname}" \
         | tar -xC "/srv/clones/${branchname}"
-    cp "${resourcedir}/default" \
+    cp "${resourcedir}/transitional" \
        "/etc/apache2/sites-enabled/${branchname}".conf
     perl -p -i -e "s/MAGICALPONY/${branchname}/g" \
          "/etc/apache2/sites-enabled/${branchname}".conf

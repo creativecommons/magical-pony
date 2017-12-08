@@ -1,0 +1,92 @@
+<VirtualHost *:80>
+    #UseCanonicalName Off
+
+    ServerName MAGICALPONY.legal.creativecommons.org
+
+    VirtualDocumentRoot /srv/clones/MAGICALPONY/docroot/
+    DocumentRoot /srv/clones/MAGICALPONY/docroot/
+
+    RewriteEngine on
+
+    #----------
+    # Config
+    #----------
+    
+    RewriteMap uppercase int:toupper
+    
+    #----------
+    # Legalcode
+    #----------
+
+    # Fixes this repercussions of this bug:
+    # http://code.creativecommons.org/issues/issue898
+    RewriteRule ^/licenses/CC0/1.0(.*)$ /publicdomain/zero/1.0$1 [L,R=301]
+    
+    # Legalcode rewrites
+	# FIXME: eval whether we should use the LHS as the actual file structure so we don't need the rewrites
+    #RewriteRule ^/legalcode %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
+    #RewriteRule .*legalcode/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
+    RewriteRule ^/licenses/(.*)sampling\+/1.0/(.*)/legalcode$ /legalcode/$1samplingplus_1.0_$2.html [L] 
+    RewriteRule ^/licenses/(.*)sampling\+/1.0/legalcode$ /legalcode/$1samplingplus_1.0.html [L] 
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/(.*)/legalcode\.([A-Za-z-]+)$ /legalcode/$1_$2_$3_$4.html [L]
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode\.([A-Za-z-]+)$ /legalcode/$1_$2_$3.html [L] 
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/(.*)/legalcode$ /legalcode/$1_$2_$3.html [L] 
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode$ /legalcode/$1_$2.html [L] 
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode\.txt$ /legalcode/$1_$2.txt [L] 
+    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode$ /legalcode/$1_$2.html [L] 
+    # -Aaa is for Chinese
+    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.([a-z][a-z](-[A-Z][a-z][a-z][a-z])?)$ /legalcode/$1_$2_$3.html [L] 
+    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.txt$ /legalcode/$1_$2.txt [L]
+
+	# FIXME: do we really need rewrites for other licenses like GPL, etc?
+    RewriteRule (.*)licence(.*) %{SERVER_PROTOCOL}://%{HTTP_HOST}$1license$2 [L,R=301]
+    #RewriteRule ^/(license|choose|characteristic|publicdomain)$ /$1/ [L,R=301]
+    #RewriteRule ^/(license|choose|characteristic|publicdomain)/(.*) /ccengine-fcgi/$1/$2 [PT,L]
+    RewriteRule ^/licenses$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/ [L,R=301]
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/([a-z][a-z])$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/$1/$2/$3/ [L,R=301]
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/([Ss]cotland)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/$1/$2/scotland/ [L,R=301]
+    RewriteRule ^/licenses/(.*)([0-9])$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/$1$2/ [L,R=301]
+    RewriteRule ^/licenses/(.*)/2.0/ar/(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/$1/2.5/ar/$2 [L,R=301]
+    RewriteRule ^/licenses/BSD/legalcode http://opensource.org/licenses/bsd-license.php [L,R]
+    RewriteRule ^/licenses/by-nc-nd/2.0/deed-music$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nc-nd/2.0/ [L,R=301]
+    RewriteRule ^/licenses/by-nc-nd/1.0/legalcode$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nd-nc/1.0/legalcode [L,R=301]
+    RewriteRule ^/licenses/by-nc-nd/1.0/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nd-nc/1.0/ [L,R=301]
+    RewriteRule ^/licenses/nc-nd/1.0/legalcode$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/nd-nc/1.0/legalcode [L,R=301]
+    RewriteRule ^/licenses/nc-nd/1.0/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/nd-nc/1.0/ [L,R=301]
+    RewriteRule ^/licenses/(.*)/deed.(.*)/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
+    RewriteRule ^/licenses/eldred-pd/$ http://web.archive.org/web/20030115160926/http://www.creativecommons.org/licenses/eldred-pd [L,R=301]
+    RewriteRule ^/licenses/GPL/2.0/rdf$ http://www.gnu.org/licenses/gpl-2.0.rdf [R=301,L]
+    RewriteRule ^/licenses/LGPL/2.1/rdf$ http://www.gnu.org/licenses/lgpl-2.1.rdf [R=301,L]
+    RewriteRule ^/licenses/meet-the-licenses$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/ [L,R=301]
+    RewriteRule ^/licenses/MIT/legalcode http://opensource.org/licenses/mit-license.php [L,R]
+    RewriteRule ^/licenses/publicdomain/1.0(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/publicdomain/ [L,R=301]
+    RewriteRule ^/licenses/zero/1.0/(.*) /publicdomain/zero/1.0/$1 [L,R=301]
+    RewriteRule ^/licesne(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/choose$1 [L,R=301]
+    RewriteRule ^/public_domain %{SERVER_PROTOCOL}://%{HTTP_HOST}/publicdomain/ [R=301,L]
+    
+    # Get missing upload files from the main site
+    # NOTE: disable in production - for staging sites only (so media URLs will work)
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
+    RewriteRule ^/(wp-content/uploads/.*)$ %{SERVER_PROTOCOL}://creativecommons.org/$1 [L]
+    
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
+
+    <Location />
+        AuthType Basic
+        AuthName "This is a testing server and not a public web server of Creative Commons. Please visit creativecommons.org"
+        AuthUserFile /srv/password
+        Require valid-user
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Location>
+
+    RewriteEngine On
+    #RewriteLog "/var/log/apache2/rewrite.log"
+    #RewriteLogLevel 3
+    LogLevel alert rewrite:trace3
+
+</VirtualHost>
