@@ -54,7 +54,10 @@ popd
 # Get any new certificates, incorporate old one, refresh expiring, install any
 # new http->https redirects, and do so quietly and automatically.
 
-certbot run --apache --agree-tos -m webmaster@creativecommons.org \
+certbot --authenticator standalone --installer apache \
+        --pre-hook "systemctl stop apache2" \
+        --post-hook "systemctl start apache2" \
+        --agree-tos -m webmaster@creativecommons.org \
         --non-interactive --quiet \
         --expand --keep-until-expiring --redirect \
         ${hostnames}
