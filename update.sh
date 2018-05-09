@@ -32,7 +32,7 @@ hostnames="-d legal.creativecommons.org"
 for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`;
 do
     branchname=$(basename "$branch")
-    hostnames="-d ${branchname}.legal.creativecommons.org ${hostnames}"
+    certbotargs="-w /srv/clones/${branchname}/docroot -d ${branchname}.legal.creativecommons.org ${certbotargs}"
     git checkout -f ${branchname}
 #    git reset --hard
 #    git pull
@@ -54,13 +54,11 @@ popd
 # Get any new certificates, incorporate old one, refresh expiring, install any
 # new http->https redirects, and do so quietly and automatically.
 
-certbot --authenticator standalone --installer apache \
-        --pre-hook "systemctl stop apache2" \
-        --post-hook "systemctl start apache2" \
-        --agree-tos -m webmaster@creativecommons.org \
-        --non-interactive --quiet \
-        --expand --keep-until-expiring --redirect \
-        ${hostnames}
+/usr/bin/certbot --authenticator webroot --installer apache \
+                 --agree-tos -m webmaster@creativecommons.org \
+                 --non-interactive --quiet \
+                 --expand --keep-until-expiring --redirect \
+                 ${certbotargs}
 
 echo "<h1>And we're done!</h1>" >> "${statusfile}"
 
