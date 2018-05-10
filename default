@@ -283,7 +283,6 @@
     ServerAlias creativecommons.ru www.creativecommons.ru
     RewriteCond %{HTTP_HOST} =creativecommons.ru [OR]
     RewriteCond %{HTTP_HOST} =www.creativecommons.ru
-    RewriteRule ^.*$ http://wiki.creativecommons.org/Ru:Заглавная+страница [L,R=302]
 
     # Redirect opened.creativecommons.org to creativecommons.org/education
     ServerAlias opened.creativecommons.org
