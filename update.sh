@@ -32,12 +32,12 @@ hostnames="-d legal.creativecommons.org"
 for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`;
 do
     branchname=$(echo "$branch" | cut -d"/" -f2-)
-    branchid="/srv/clones/${branchname//\//-}"
+    branchid="$(basename ${branchname})"
     branchpath="/srv/clones/${branchid}"
-    certbotargs="-w $branchpath/docroot -d ${branchname}.legal.creativecommons.org ${certbotargs}"
+    certbotargs="-w $branchpath/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs}"
     git checkout -f ${branchname}
-#    git reset --hard
-#    git pull
+    git reset --hard
+    git pull
     mkdir -p "$branchpath"
     git archive "${branchname}" \
         | tar -xC "$branchpath"
