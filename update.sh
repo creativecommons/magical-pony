@@ -36,8 +36,8 @@ do
     branchpath="/srv/clones/${branchid}"
     certbotargs="-w $branchpath/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs}"
     git checkout -f ${branchname}
-    git reset --hard
-    git pull
+#    git reset --hard
+#    git pull
     mkdir -p "$branchpath"
     git archive "${branchname}" \
         | tar -xC "$branchpath"

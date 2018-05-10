@@ -351,6 +351,10 @@
     allow from all
     </Location>
 
+    <Location /.well-known/>
+        Require all granted
+    </Location>
+
     RewriteEngine On
     #RewriteLog "/var/log/apache2/rewrite.log"
     #RewriteLogLevel 3
