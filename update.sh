@@ -31,20 +31,22 @@ hostnames="-d legal.creativecommons.org"
 
 for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`;
 do
-    branchname=$(basename "$branch")
-    certbotargs="-w /srv/clones/${branchname}/docroot -d ${branchname}.legal.creativecommons.org ${certbotargs}"
+    branchname=$(echo "$branch" | cut -d"/" -f2-)
+    branchid="/srv/clones/${branchname//\//-}"
+    branchpath="/srv/clones/${branchid}"
+    certbotargs="-w $branchpath/docroot -d ${branchname}.legal.creativecommons.org ${certbotargs}"
     git checkout -f ${branchname}
 #    git reset --hard
 #    git pull
-    mkdir -p "/srv/clones/${branchname}"
+    mkdir -p "$branchpath"
     git archive "${branchname}" \
-        | tar -xC "/srv/clones/${branchname}"
+        | tar -xC "$branchpath"
     cp "${resourcedir}/default" \
-       "/etc/apache2/sites-enabled/${branchname}".conf
-    perl -p -i -e "s/MAGICALPONY/${branchname}/g" \
-         "/etc/apache2/sites-enabled/${branchname}".conf
+       "/etc/apache2/sites-enabled/${branchid}".conf
+    perl -p -i -e "s/MAGICALPONY/${branchid}/g" \
+         "/etc/apache2/sites-enabled/${branchid}".conf
     hash=$(git log ${branchname} -1 --format="%H")
-    echo "<h3>${branchname}</h3><p><b>Commit:</b> <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\"\>${hash}</a></p>" \
+    echo "<h3>${branchid} (${branchname})</h3><p><b>Commit:</b> <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\"\>${hash}</a></p>" \
 	 >> "${statusfile}"
     git log ${branchname} -1 --format="<p>%s</p>" >> "${statusfile}"
 done

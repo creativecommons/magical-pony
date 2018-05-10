@@ -3,8 +3,8 @@
 
     ServerName MAGICALPONY.legal.creativecommons.org
 
-    VirtualDocumentRoot /srv/clones/MAGICALPONY/docroot/
-    DocumentRoot /srv/clones/MAGICALPONY/docroot/
+    VirtualDocumentRoot /srv/clones/MAGICALPONY/docroot
+    DocumentRoot /srv/clones/MAGICALPONY/docroot
 
     RewriteEngine on
     
