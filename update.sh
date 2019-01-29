@@ -28,9 +28,9 @@ rm -rf "${checkoutdir}"
 mkdir -p "${checkoutdir}"
 
 {
-    echo "<h1>Updating the Magical Pony</h1>" > "${statusfile}"
-    echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
-    cat pony.img.html >> "${statusfile}"
+    echo '<h1>Updating the Magical Pony</h1>'
+    echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>"
+    cat pony.img.html
 } > "${statusfile}"
 
 pushd "${checkoutdir}"
