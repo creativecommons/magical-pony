@@ -1,9 +1,20 @@
 #!/bin/bash
+# I am really sorry for anyone who has to work with this, including myself and
+# Kat. - mattl
 
-# I am really sorry for anyone who has to work with this, including myself and Kat. - mattl
+set -o errexit
+set -o errtrace
+set -o nounset
 
-repo="https://github.com/creativecommons/creativecommons.org.git"
-reponame="cc-all-forks"
+trap '_es=${?};
+    _lo=${LINENO};
+    _co=${BASH_COMMAND};
+    echo "${0}: line ${_lo}: \"${_co}\" exited with a status of ${_es}";
+    exit ${_es}' ERR
+
+
+repo='https://github.com/creativecommons/creativecommons.org.git'
+reponame='cc-all-forks'
 workdir="${HOME}"
 checkoutdir="${workdir}/${reponame}"
 resourcedir="${HOME}/magical-pony"
