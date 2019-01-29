@@ -24,7 +24,9 @@ checkoutdir="${workdir}/${reponame}"
 resourcedir="${HOME}/magical-pony"
 statusfile='/var/www/html/index.html'
 
+rm -rf /srv/old-clones/
 rm -rf "${checkoutdir}"
+
 mkdir -p "${checkoutdir}"
 
 {
@@ -38,9 +40,9 @@ pushd "${checkoutdir}"
 # Get a clean version to avoid any merge/reset weirdness
 git clone "${repo}" .
 
-echo "<h2>Branches</h2>" >> "${statusfile}"
+echo '<h2>Branches</h2>' >> "${statusfile}"
 
-hostnames="-d legal.creativecommons.org"
+hostnames='-d legal.creativecommons.org'
 
 for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`;
 do
@@ -59,8 +61,12 @@ do
     perl -p -i -e "s/MAGICALPONY/${branchid}/g" \
          "/etc/apache2/sites-enabled/${branchid}".conf
     hash=$(git log ${branchname} -1 --format="%H")
-    echo "<h3>${branchid} (${branchname})</h3><p><b>Commit:</b> <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\"\>${hash}</a></p>" \
-	 >> "${statusfile}"
+    {
+        echo "<h3>${branchid} (${branchname})</h3>"
+        echo '<p><b>Commit: </b>'
+        echo "    <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\">${hash}</a>"
+        echo "</p>"
+    } >> "${statusfile}"
     git log ${branchname} -1 --format="<p>%s</p>" >> "${statusfile}"
 done
 
@@ -75,13 +81,11 @@ popd
                  --expand --keep-until-expiring --redirect \
                  ${certbotargs}
 
-echo "<h1>And we're done!</h1>" >> "${statusfile}"
+echo '<h1>And we are done!</h1>' >> "${statusfile}"
 
 rm -rf /srv/old-clones/
 
-echo "<h2>" >> "${statusfile}"
-echo `date` >> "${statusfile}"
-echo "</h2>" >> "${statusfile}"
+echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
 
 chown www-data:www-data "${statusfile}"
 
