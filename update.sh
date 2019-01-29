@@ -45,7 +45,7 @@ do
     branchname=$(echo "$branch" | cut -d"/" -f2-)
     branchid="$(basename ${branchname})"
     branchpath="/srv/clones/${branchid}"
-    certbotargs="-w $branchpath/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs}"
+    certbotargs="-w $branchpath/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs:-}"
     git checkout -f ${branchname}
 #    git reset --hard
 #    git pull
