@@ -1,61 +1,60 @@
+# vim: ft=apache ts=4 sw=4 sts=4 sr et:
 <VirtualHost *:80>
-    #UseCanonicalName Off
-
     ServerName MAGICALPONY.legal.creativecommons.org
 
     VirtualDocumentRoot /srv/clones/MAGICALPONY/docroot
     DocumentRoot /srv/clones/MAGICALPONY/docroot
 
     RewriteEngine on
-    
+
     #----------
     # Logging. Uncomment these lines and adjust the log level for debugging.  Make
     # sure to recomment them and restart Apache when done because the file will
     # become immense in a hurry.
     #----------
-    
+
     #RewriteLog /tmp/rewrite.log
     #RewriteLogLevel 5
-    
+
     #----------
     # Config
     #----------
-    
+
     RewriteMap uppercase int:toupper
-    
+
     #----------
     # License engine and legalcode
     #----------
-    
+
     Alias /ccengine-fcgi /srv/creativecommons.org/python_env/bin/ccengine.fcgi
     Alias /cc.engine-cache /srv/creativecommons.org/python_env/cache
-    
+
     # Redirect all /license to /choose before we go any deeper
     RewriteRule ^/choose$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/choose/ [L,R=301]
     RewriteRule ^/license$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/choose/ [L,R=301]
-    
+
     # Fixes this repercussions of this bug:
     # http://code.creativecommons.org/issues/issue898
     RewriteRule ^/licenses/CC0/1.0(.*)$ /publicdomain/zero/1.0$1 [L,R=301]
-    
+
     # Legalcode rewrites
-	# FIXME: eval whether we should use the LHS as the actual file structure so we don't need the rewrites
+    # FIXME: eval whether we should use the LHS as the actual file structure so we don't need the rewrites
     RewriteRule ^/legalcode %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
     RewriteRule .*legalcode/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
-    RewriteRule ^/licenses/(.*)sampling\+/1.0/(.*)/legalcode$ /legalcode/$1samplingplus_1.0_$2.html [L] 
-    RewriteRule ^/licenses/(.*)sampling\+/1.0/legalcode$ /legalcode/$1samplingplus_1.0.html [L] 
+    RewriteRule ^/licenses/(.*)sampling\+/1.0/(.*)/legalcode$ /legalcode/$1samplingplus_1.0_$2.html [L]
+    RewriteRule ^/licenses/(.*)sampling\+/1.0/legalcode$ /legalcode/$1samplingplus_1.0.html [L]
     RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/(.*)/legalcode\.([A-Za-z-]+)$ /legalcode/$1_$2_$3_$4.html [L]
-    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode\.([a-z][a-z])$ /legalcode/$1_$2_$3.html [L] 
-    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/(.*)/legalcode$ /legalcode/$1_$2_$3.html [L] 
-    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode$ /legalcode/$1_$2.html [L] 
-    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode\.txt$ /legalcode/$1_$2.txt [L] 
-    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode$ /legalcode/$1_$2.html [L] 
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode\.([a-z][a-z])$ /legalcode/$1_$2_$3.html [L]
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/(.*)/legalcode$ /legalcode/$1_$2_$3.html [L]
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode$ /legalcode/$1_$2.html [L]
+    RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/legalcode\.txt$ /legalcode/$1_$2.txt [L]
+    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode$ /legalcode/$1_$2.html [L]
     # -Aaa is for Chinese
-    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.([a-z][a-z](-[A-Z][a-z][a-z][a-z])?)$ /legalcode/$1_$2_$3.html [L] 
+    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.([a-z][a-z](-[A-Z][a-z][a-z][a-z])?)$ /legalcode/$1_$2_$3.html [L]
     RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.txt$ /legalcode/$1_$2.txt [L]
-    
+
     # License RDF rewrites
-	# FIXME: eval whether we should use the LHS as the actual file structure so we don't need the rewrites
+    # FIXME: eval whether we should use the LHS as the actual file structure so we don't need the rewrites
     RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/([a-z]+)/license_rdf$ /license_rdf/creativecommons.org_licenses_$1_$2_$3_.rdf [L,T=application/rdf+xml]
     RewriteRule ^/licenses/(.*)/([0-9]\.[0-9])/([a-z]+)/rdf$ /license_rdf/creativecommons.org_licenses_$1_$2_$3_.rdf [L,T=application/rdf+xml]
     RewriteRule ^/licenses/index.rdf$ /rdf/index.rdf [L,T=application/rdf+xml]
@@ -64,14 +63,14 @@
     RewriteRule ^/(publicdomain|licenses)/(.*)/([0-9]\.[0-9])/license_rdf$ /license_rdf/creativecommons.org_$1_$2_$3_.rdf [L,T=application/rdf+xml]
     RewriteRule ^/(publicdomain|licenses)/(.*)/([0-9]\.[0-9])/rdf$ /license_rdf/creativecommons.org_$1_$2_$3_.rdf [L,T=application/rdf+xml]
     RewriteRule .*rdf/$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/ [L,R=301]
-    
+
     # See if deed is cached before sending to cc.engine
-	# FIXME: eval memcache as an alternative?
+    # FIXME: eval memcache as an alternative?
     RewriteCond %{REQUEST_URI} ^/licenses
     RewriteCond /srv/clones/MAGICALPONY/python_env/cache/%{REQUEST_FILENAME} -s
     RewriteRule ^/licenses/(.*) /cc.engine-cache/licenses/$1 [L,PT]
-    
-	# FIXME: do we really need rewrites for other licenses like GPL, etc?
+
+    # FIXME: do we really need rewrites for other licenses like GPL, etc?
     RewriteRule (.*)licence(.*) %{SERVER_PROTOCOL}://%{HTTP_HOST}$1license$2 [L,R=301]
     RewriteRule ^/(license|choose|characteristic|publicdomain)$ /$1/ [L,R=301]
     RewriteRule ^/(license|choose|characteristic|publicdomain)/(.*) /ccengine-fcgi/$1/$2 [PT,L]
@@ -187,6 +186,8 @@
     RewriteRule ^/press-releases/entry/40938 /press-releases/entry/40935 [L,R=301]
     RewriteRule ^/weblog/entry/40938 /press-releases/entry/40935 [L,R=301]
 
+    RewriteRule ^/weblog/entry/([-a-z0-9]+) /index.php?p=$1 [L,R=301]
+
     #----------
     # Farming out old/removed CC.org content to CC Wiki
     #----------
@@ -246,11 +247,11 @@
 
     RewriteRule ^/government https://creativecommons.org/publicpolicy [L,R=301]
 
-    #---------- 
+    #----------
     # Redirects to CC.net
-    #---------- 
-	# FIXME: a bunch of these have moved / don't exist anymore
-    
+    #----------
+    # FIXME: a bunch of these have moved / don't exist anymore
+
     RewriteRule ^/about/affiliates.*$ https://creativecommons.net/supporters [R=301,L]
     RewriteRule ^/about/lessigletter.*$ https://creativecommons.net/letters [L,R=301]
     RewriteRule ^/about/supporters$ https://creativecommons.net/supporters [L,R=301]
@@ -264,13 +265,13 @@
     #----------
     # Miscellaneous
     #----------
-    
+
     # Map backwardly named license types to their actual location
     RewriteRule ^/licenses/by-nc-nd/1.0/(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nd-nc/1.0/$1 [L,R=301]
     RewriteRule ^/licenses/by-nd-nc/2.0/(.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/licenses/by-nc-nd/2.0/$1 [L,R=301]
-    
+
     # Map the namespace document and schema URLs
-	# FIXME: are symlinks cleaner?
+    # FIXME: are symlinks cleaner?
     RewriteRule ^/ns$ /rdf/ns.html [L]
     RewriteRule ^/schema.rdf$ /rdf/schema.rdf [L]
 
@@ -301,7 +302,7 @@
     #----------
     # WordPress rules here instead of .htaccess
     #----------
-    
+
     # NOTE: sometimes Wordpress decides what page to display based on both the
     # query string AND the REQUEST_URI.  mod_rewrite does not alter the
     # REQUEST_URI, and therefore mod_rewrite by itself is not always enough to
@@ -309,33 +310,33 @@
     # argument '&roflcopter' to whatever RewriteRule.  This will signal a special
     # plugin (cc_rewrite_request_uri.php) to actually alter the REQUEST_URI in the
     # PHP environment to be equivalent to the right side of the RewriteRule.
-    
+
     # Catch requests to certain posts and feed them to Wordpress in a way that
     # it knows how to handle
     RewriteRule ^/weblog(/archive|)/entry/(\d+)/?$ /index.php?p=$2&%{QUERY_STRING}&roflcopter [L]
     RewriteRule ^/press-releases/entry/(\d+)/?$ /index.php?p=$1&roflcopter [L]
-    
+
     # Catch any requests for the general /weblog/archive and also to the
     # archives for any particular year/month and then redirect the client
     # to the new-style permalink
     RewriteRule ^/weblog/archive(/?.*)$ %{SERVER_PROTOCOL}://%{HTTP_HOST}/weblog$1 [L,R=301]
-    
+
     # Catch any old permalinks that point to long, ugly post names.  The
     # CC Permalink Mapper will get this request and redirect the user accordingly.
     # But don't do this if someone was trying to access some particular feed
     RewriteCond %{REQUEST_URI} !^/([a-z-]+)/\d{4}/\d{2}/feed
     RewriteRule ^/([a-z-]+)/\d{4}/\d{2}/([a-zA-Z0-9-]+)/?$ /index.php?post_name=$2&category=$1&roflcopter [L]
-    
+
     # '<some path>/rss' returns an RSS 0.92 feed, which we don't want, so make any
     # requests for '<some path>/rss' return an RSS 2 feed.
     RewriteRule ^/(.*?)rss/?$ /index.php/$1?feed=rss2 [L]
-    
+
     # Get missing upload files from the main site
     # NOTE: disable in production - for staging sites only (so media URLs will work)
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
     RewriteRule ^/(wp-content/uploads/.*)$ %{SERVER_PROTOCOL}://creativecommons.org/$1 [L]
-    
+
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
     RewriteRule . /index.php [L]
@@ -354,9 +355,6 @@
         Require all granted
     </Location>
 
-    RewriteEngine On
-    #RewriteLog "/var/log/apache2/rewrite.log"
-    #RewriteLogLevel 3
     LogLevel alert rewrite:trace3
 
 </VirtualHost>
