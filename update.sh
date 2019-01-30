@@ -36,7 +36,7 @@ mkdir -p "${checkoutdir}"
     echo '  </a>'
     echo '</p>'
     echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>"
-    cat pony.img.html
+    cat ${resourcedir}/pony.img.html
 } > "${statusfile}"
 
 pushd "${checkoutdir}"
