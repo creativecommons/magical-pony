@@ -44,10 +44,10 @@ echo '<h2>Branches</h2>' >> "${statusfile}"
 
 hostnames='-d legal.creativecommons.org'
 
-for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`;
+for branchname in $(git branch -r | grep -v 'HEAD\|master')
 do
-    branchname=$(echo "$branch" | cut -d"/" -f2-)
-    branchid="$(basename ${branchname})"
+    echo "# ${branchname}"
+    branchid="${branchname##*/}"
     branchpath="/srv/clones/${branchid}"
     certbotargs="-w ${branchpath}/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs:-}"
     git checkout -f "${branchname}"
@@ -66,10 +66,12 @@ do
         echo '</p>'
     } >> "${statusfile}"
     git log ${branchname} -1 --format="<p>%s</p>" >> "${statusfile}"
+    echo
 done
 
 popd
 
+echo '# cerbot'
 # Get any new certificates, incorporate old one, refresh expiring, install any
 # new http->https redirects, and do so automatically.
 if /usr/bin/certbot --authenticator webroot --installer apache \
@@ -84,6 +86,7 @@ else
         echo '<p>See <pre>/var/log/letsencrypt/letsencrypt.log</pre>.</p>'
     } >> "${statusfile}"
 fi
+echo
 
 rm -rf /srv/old-clones/
 
