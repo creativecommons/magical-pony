@@ -23,7 +23,6 @@ checkoutdir="${workdir}/${reponame}"
 resourcedir="${HOME}/magical-pony"
 statusfile='/var/www/html/index.html'
 
-rm -rf /srv/old-clones/
 rm -rf "${checkoutdir}"
 
 mkdir -p "${checkoutdir}"
@@ -51,12 +50,16 @@ do
     branchpath="/srv/clones/${branchid}"
     webroot="${branchpath}/docroot"
     domain="${branchid}.legal.creativecommons.org"
-    certbotargs="${certbotargs:-} -w '${webroot}' -d '${domain}'"
+    certbotargs="${certbotargs:-} -w ${webroot} -d ${domain}"
+    echo "${branchpath}"
     git checkout -f -q "${branchname}"
     git show-branch --sha1-name HEAD
-    mkdir -p "${branchpath}"
+    mkdir -p "${branchpath}.NEW"
     git archive "${branchname}" \
-        | tar -xC "${branchpath}"
+        | tar -xC "${branchpath}.NEW"
+    [[ -d ${branchpath} ]] && mv ${branchpath} ${branchpath}.OLD
+    mv ${branchpath}.NEW ${branchpath}
+    [[ -d ${branchpath}.OLD ]] && rm -rf ${branchpath}.OLD
     # Ensure branchpath mtime is up-to-date
     touch ${branchpath}/.gitignore
     cp "${resourcedir}/default" \
@@ -98,8 +101,6 @@ else
 fi
 echo
 
-rm -rf /srv/old-clones/
-
 echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
 
 # Touch primary apache files to ensure they are preserved
@@ -108,7 +109,7 @@ touch /etc/apache2/sites-enabled/legal.creativecommons.org-le-ssl.conf
 
 echo '# Clean-up: /srv/clones'
 find /srv/clones/* -maxdepth 0 -type d -mtime +1
-find /srv/clones/* -maxdepth 0 -type d -mtime +1 -delete
+find /srv/clones/* -maxdepth 0 -type d -mtime +1 -exec rm -rf {} +
 echo
 
 echo '# Clean-up: /etc/apache2/sites-enabled/'
