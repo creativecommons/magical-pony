@@ -89,7 +89,7 @@ echo
 # new http->https redirects, and do so automatically.
 if /usr/bin/certbot --authenticator webroot --installer apache \
                  --agree-tos -m webmaster@creativecommons.org \
-                 --non-interactive --expand --keep-until-expiring --redirect \
+                 --non-interactive --expand --keep-until-expiring \
                  ${certbotargs}
 then
     echo '<h1>And we are done!</h1>' >> "${statusfile}"
