@@ -22,6 +22,7 @@ workdir="${HOME}"
 checkoutdir="${workdir}/${reponame}"
 resourcedir="${HOME}/magical-pony"
 statusfile='/var/www/html/index.html'
+certbotargs='-w /var/www/html -d legal.creativecommons.org'
 
 rm -rf "${checkoutdir}"
 
