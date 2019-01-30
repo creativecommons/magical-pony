@@ -49,7 +49,9 @@ do
     echo "# ${branchname}"
     branchid="${branchname##*/}"
     branchpath="/srv/clones/${branchid}"
-    certbotargs="-w ${branchpath}/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs:-}"
+    webroot="${branchpath}/docroot"
+    domain="${branchid}.legal.creativecommons.org"
+    certbotargs="${certbotargs:-} -w '${webroot}' -d '${domain}'"
     git checkout -f -q "${branchname}"
     git show-branch --sha1-name HEAD
     mkdir -p "${branchpath}"
