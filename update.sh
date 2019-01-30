@@ -53,7 +53,9 @@ do
     git checkout -f "${branchname}"
     mkdir -p "${branchpath}"
     git archive "${branchname}" \
-        | tar -xC "$branchpath"
+        | tar -xC "${branchpath}"
+    # Ensure branchpath mtime is up-to-date
+    touch ${branchpath}/.gitignore
     cp "${resourcedir}/default" \
        "/etc/apache2/sites-enabled/${branchid}.conf"
     perl -p -i -e "s/MAGICALPONY/${branchid}/g" \
@@ -72,7 +74,11 @@ done
 popd
 echo
 
-echo '# cerbot'
+echo '# cerbotargs:'
+echo "${certbotargs}"
+echo
+echo '# run cerbot'
+echo
 # Get any new certificates, incorporate old one, refresh expiring, install any
 # new http->https redirects, and do so automatically.
 if /usr/bin/certbot --authenticator webroot --installer apache \
