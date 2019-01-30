@@ -49,23 +49,21 @@ do
     branchname=$(echo "$branch" | cut -d"/" -f2-)
     branchid="$(basename ${branchname})"
     branchpath="/srv/clones/${branchid}"
-    certbotargs="-w $branchpath/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs:-}"
-    git checkout -f ${branchname}
-#    git reset --hard
-#    git pull
-    mkdir -p "$branchpath"
+    certbotargs="-w ${branchpath}/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs:-}"
+    git checkout -f "${branchname}"
+    mkdir -p "${branchpath}"
     git archive "${branchname}" \
         | tar -xC "$branchpath"
     cp "${resourcedir}/default" \
-       "/etc/apache2/sites-enabled/${branchid}".conf
+       "/etc/apache2/sites-enabled/${branchid}.conf"
     perl -p -i -e "s/MAGICALPONY/${branchid}/g" \
          "/etc/apache2/sites-enabled/${branchid}".conf
-    hash=$(git log ${branchname} -1 --format="%H")
+    hash=$(git log ${branchname} -1 --format='%H')
     {
         echo "<h3>${branchid} (${branchname})</h3>"
         echo '<p><b>Commit: </b>'
         echo "    <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\">${hash}</a>"
-        echo "</p>"
+        echo '</p>'
     } >> "${statusfile}"
     git log ${branchname} -1 --format="<p>%s</p>" >> "${statusfile}"
 done
@@ -73,20 +71,22 @@ done
 popd
 
 # Get any new certificates, incorporate old one, refresh expiring, install any
-# new http->https redirects, and do so quietly and automatically.
-
-/usr/bin/certbot --authenticator webroot --installer apache \
+# new http->https redirects, and do so automatically.
+if /usr/bin/certbot --authenticator webroot --installer apache \
                  --agree-tos -m webmaster@creativecommons.org \
-                 --non-interactive --quiet \
-                 --expand --keep-until-expiring --redirect \
+                 --non-interactive --expand --keep-until-expiring --redirect \
                  ${certbotargs}
-
-echo '<h1>And we are done!</h1>' >> "${statusfile}"
+then
+    echo '<h1>And we are done!</h1>' >> "${statusfile}"
+else
+    {
+        echo '<h1>certbot ERROR</h1>'
+        echo '<p>See <pre>/var/log/letsencrypt/letsencrypt.log</pre>.</p>'
+    } >> "${statusfile}"
+fi
 
 rm -rf /srv/old-clones/
 
 echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
-
-chown www-data:www-data "${statusfile}"
 
 service apache2 restart
