@@ -107,14 +107,18 @@ echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
 touch /etc/apache2/sites-enabled/legal.creativecommons.org.conf
 touch /etc/apache2/sites-enabled/legal.creativecommons.org-le-ssl.conf
 
+echo 'Directories older than 24 hours are deleted by magical-pony update.sh' \
+    > /srv/clones/README
 echo '# Clean-up: /srv/clones'
 find /srv/clones/* -maxdepth 0 -type d -mtime +1
 find /srv/clones/* -maxdepth 0 -type d -mtime +1 -exec rm -rf {} +
 echo
 
+echo 'Files older than 24 hours are deleted by magical-pony update.sh' \
+    > /etc/apache2/sites-enabled/README
 echo '# Clean-up: /etc/apache2/sites-enabled/'
-find /etc/apache2/sites-enabled/ -mtime +1
-find /etc/apache2/sites-enabled/ -mtime +1 -delete
+find /etc/apache2/sites-enabled -mtime +1
+find /etc/apache2/sites-enabled -mtime +1 -delete
 echo
 
 service apache2 restart
