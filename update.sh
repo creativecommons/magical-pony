@@ -68,10 +68,12 @@ do
          "/etc/apache2/sites-enabled/${branchid}".conf
     hash=$(git log ${branchname} -1 --format='%H')
     {
+        echo '<hr>'
         echo "<h3>${branchid} (${branchname})</h3>"
         echo '<p><b>Commit: </b>'
         echo "    <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\">${hash}</a>"
         echo '</p>'
+        echo "<p><a href=\"https://${domain}/\">${domain}</a></p>"
     } >> "${statusfile}"
     git log ${branchname} -1 --format="<p>%s</p>" >> "${statusfile}"
     echo
