@@ -100,4 +100,18 @@ rm -rf /srv/old-clones/
 
 echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
 
+# Touch primary apache files to ensure they are preserved
+touch /etc/apache2/sites-enabled/legal.creativecommons.org.conf
+touch /etc/apache2/sites-enabled/legal.creativecommons.org-le-ssl.conf
+
+echo '# Clean-up: /srv/clones'
+find /srv/clones/* -maxdepth 0 -type d -mtime +1
+find /srv/clones/* -maxdepth 0 -type d -mtime +1 -delete
+echo
+
+echo '# Clean-up: /etc/apache2/sites-enabled/'
+find /etc/apache2/sites-enabled/ -mtime +1
+find /etc/apache2/sites-enabled/ -mtime +1 -delete
+echo
+
 service apache2 restart
