@@ -29,6 +29,11 @@ mkdir -p "${checkoutdir}"
 
 {
     echo '<h1>Updating the Magical Pony</h1>'
+    echo '<p>'
+    echo '  <a href="https://github.com/creativecommons/magical-pony">'
+    echo '      https://github.com/creativecommons/magical-pony'
+    echo '  </a>'
+    echo '</p>'
     echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>"
     cat pony.img.html
 } > "${statusfile}"
