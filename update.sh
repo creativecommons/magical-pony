@@ -5,7 +5,6 @@
 # For troubleshooting:
 # sudo tail -f /var/log/letsencrypt/letsencrypt.log
 
-
 set -o errexit
 set -o errtrace
 set -o nounset
@@ -36,13 +35,14 @@ mkdir -p "${checkoutdir}"
 } > "${statusfile}"
 
 pushd "${checkoutdir}"
+echo
 
+echo "# git clone ${repo}"
 # Get a clean version to avoid any merge/reset weirdness
 git clone "${repo}" .
+echo
 
 echo '<h2>Branches</h2>' >> "${statusfile}"
-
-hostnames='-d legal.creativecommons.org'
 
 for branchname in $(git branch -r | grep -v 'HEAD\|master')
 do
@@ -70,6 +70,7 @@ do
 done
 
 popd
+echo
 
 echo '# cerbot'
 # Get any new certificates, incorporate old one, refresh expiring, install any
