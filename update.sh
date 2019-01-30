@@ -50,7 +50,7 @@ do
     branchid="${branchname##*/}"
     branchpath="/srv/clones/${branchid}"
     certbotargs="-w ${branchpath}/docroot -d ${branchid}.legal.creativecommons.org ${certbotargs:-}"
-    git checkout -f "${branchname}"
+    git checkout -f --detach "${branchname}" | grep -v '^Previous'
     mkdir -p "${branchpath}"
     git archive "${branchname}" \
         | tar -xC "${branchpath}"
