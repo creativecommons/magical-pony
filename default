@@ -52,6 +52,9 @@
     # -Aaa is for Chinese
     RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.([a-z][a-z](-[A-Z][a-z][a-z][a-z])?)$ /legalcode/$1_$2_$3.html [L]
     RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/legalcode\.txt$ /legalcode/$1_$2.txt [L]
+    # 2019-06-07 Timid Robot: Fixes https://github.com/creativecommons/creativecommons.org/issues/982
+    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/(deed)?$ /legalcode/$1_$2.html [L]
+    RewriteRule ^/publicdomain/(.*)/([0-9]\.[0-9])/deed\.([a-zA-Z_-]+)$ /legalcode/$1_$2_$3.html [L]
 
     # License RDF rewrites
     # FIXME: eval whether we should use the LHS as the actual file structure so we don't need the rewrites
