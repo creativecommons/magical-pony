@@ -18,9 +18,9 @@ trap '_es=${?};
 
 repo='https://github.com/creativecommons/creativecommons.org.git'
 reponame='cc-all-forks'
-workdir="${HOME}"
+workdir='/root'
 checkoutdir="${workdir}/${reponame}"
-resourcedir="${HOME}/magical-pony"
+resourcedir="${workdir}/magical-pony"
 statusfile='/var/www/html/index.html'
 certbotargs='-w /var/www/html -d legal.creativecommons.org'
 
@@ -28,16 +28,22 @@ rm -rf "${checkoutdir}"
 
 mkdir -p "${checkoutdir}"
 
-{
-    echo '<h1>Updating the Magical Pony</h1>'
-    echo '<p>'
-    echo '  <a href="https://github.com/creativecommons/magical-pony">'
-    echo '      https://github.com/creativecommons/magical-pony'
-    echo '  </a>'
-    echo '</p>'
-    echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>"
-    cat ${resourcedir}/pony.img.html
-} > "${statusfile}"
+echo '<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Updating the Magical Pony</title>
+  </head>
+  <body style="background-color:lavender; font-family:monospace;">
+    <h1>Updating the Magical Pony</h1>
+    <p>
+      <a href="https://github.com/creativecommons/magical-pony">
+        https://github.com/creativecommons/magical-pony
+      </a>
+    </p>' > "${statusfile}"
+echo "    <h2>$(date -u '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
+echo "      <p>($(date '+%A %F %T %:::z %Z'))</p>" >> "${statusfile}"
+sed -e's/^/    /' ${resourcedir}/pony.img.html >> "${statusfile}"
 
 pushd "${checkoutdir}"
 echo
@@ -47,12 +53,26 @@ echo "# git clone ${repo}"
 git clone "${repo}" .
 echo
 
-echo '<h2>Branches</h2>' >> "${statusfile}"
+echo '    <h2>Branches</h2>' >> "${statusfile}"
 
 for branchname in $(git branch -r | grep -v 'HEAD\|master')
 do
     echo "# ${branchname}"
     branchid="${branchname##*/}"
+    if [[ -n "${branchid//[-.[:alnum:]]/}" ]]
+    then
+        {
+            echo '    <hr>'
+            echo "    <h3 style=\"color:red;\">${branchid}</h3>"
+            echo "    <p style=\"color:red;\"> (${branchname})</p>"
+            echo -n "    <p style=\"color:red;\">The branchid (${branchid}) is"
+            echo ' not a valid DNS domain name</p>'
+            echo -n '    <p style=\"color:red;\"><strong>SKIPPING DEPLOYMENT'
+            echo '</strong></p>'
+            echo
+        } >> "${statusfile}"
+        continue
+    fi
     branchpath="/srv/clones/${branchid}"
     webroot="${branchpath}/docroot"
     domain="${branchid}.legal.creativecommons.org"
@@ -60,6 +80,7 @@ do
     echo "${branchpath}"
     git checkout -f -q "${branchname}"
     git show-branch --sha1-name HEAD
+    #
     mkdir -p "${branchpath}.NEW"
     git archive "${branchname}" \
         | tar -xC "${branchpath}.NEW"
@@ -76,20 +97,36 @@ do
          "/etc/apache2/sites-enabled/${branchid}.conf"
     hash=$(git log ${branchname} -1 --format='%H')
     {
-        echo '<hr>'
-        echo "<h3>${branchid} (${branchname})</h3>"
-        echo '<p><b>Commit: </b>'
-        echo "    <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\">${hash}</a>"
-        echo '</p>'
-        echo "<p><a href=\"https://${domain}/\">${domain}</a></p>"
+        echo '    <hr>'
+        echo "    <h3>${branchid}</h3>"
+        echo "    <p>(${branchname})</p>"
+        echo '    <h4>Test Domain</h4>'
+        echo '    <p>'
+        echo "      <a href=\"https://${domain}/\">"
+        echo "        ${domain}"
+        echo '      </a>'
+        echo '    </p>'
+        echo '    <h4>Commit</h4>'
+        echo '    <p>'
+        echo "      <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\">"
+        echo "        ${hash}"
+        echo "      </a>"
+        echo '    </p>'
     } >> "${statusfile}"
-    git log ${branchname} -1 --format="<p>%s</p>" >> "${statusfile}"
+    git log ${branchname} -1 --format='    <p>%s</p>' >> "${statusfile}"
+    echo >> "${statusfile}"
     echo
 done
+echo '    <hr>' >> "${statusfile}"
 
 popd
-echo
 
+echo
+echo '# apache2 restart'
+service apache2 restart
+sleep 1
+
+echo
 echo '# cerbotargs:'
 echo "${certbotargs}"
 echo
@@ -108,16 +145,21 @@ if /usr/bin/certbot \
     --installer apache \
     ${certbotargs}
 then
-    echo '<h1>And we are done!</h1>' >> "${statusfile}"
+    echo '    <h2>And we are done!</h2>' >> "${statusfile}"
 else
     {
-        echo '<h1>certbot ERROR</h1>'
-        echo '<p>See <pre>/var/log/letsencrypt/letsencrypt.log</pre>.</p>'
+        echo '    <h2>certbot ERROR</h2>'
+        echo '    <p>See:'
+        echo '        <pre>/var/log/letsencrypt/letsencrypt.log</pre>'
+        echo '    </p>'
     } >> "${statusfile}"
 fi
 echo
 
-echo "<h2>$(date '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
+echo "    <h2>$(date -u '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
+echo "      <p>($(date '+%A %F %T %:::z %Z'))</p>" >> "${statusfile}"
+echo '  </body>' >> "${statusfile}"
+echo '</html>' >> "${statusfile}"
 
 # Touch primary apache files to ensure they are preserved
 touch /etc/apache2/sites-enabled/legal.creativecommons.org.conf
@@ -136,5 +178,5 @@ echo '# Clean-up: /etc/apache2/sites-enabled/'
 find /etc/apache2/sites-enabled -mtime +1
 find /etc/apache2/sites-enabled -mtime +1 -delete
 echo
-
+echo '# apache2 restart'
 service apache2 restart
