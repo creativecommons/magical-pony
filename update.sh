@@ -42,9 +42,6 @@ echo '<!DOCTYPE html>
         margin:1em;
         padding:1em;
       }
-      h2 {
-        clear:both;
-      }
       h3 {
         margin-top:0;
       }
@@ -55,6 +52,9 @@ echo '<!DOCTYPE html>
         padding-top:1em;
         text-align:left;
         vertical-align:top;
+      }
+      .clear {
+        clear:both;
       }
       .example-lavender {
         background-color:black;
@@ -110,7 +110,7 @@ echo "# git clone ${repo}"
 git clone "${repo}" .
 echo
 
-echo '    <h2>Branches</h2>' >> "${statusfile}"
+echo '    <h2 class="clear">Branches</h2>' >> "${statusfile}"
 
 for branchname in $(git branch -r | grep -v 'HEAD\|master')
 do
