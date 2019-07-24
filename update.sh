@@ -184,7 +184,6 @@ do
     }  >> "${statusfile}"
     echo
 done
-echo '    <hr>' >> "${statusfile}"
 
 popd > /dev/null
 
