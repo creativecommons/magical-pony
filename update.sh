@@ -93,7 +93,7 @@ do
     #rm -f "/etc/apache2/sites-enabled/${branchid}-le-ssl.conf"
     cp "${resourcedir}/default" \
        "/etc/apache2/sites-enabled/${branchid}.conf"
-    perl -p -i -e "s/MAGICALPONY/${branchid}/g" \
+    sed -e"s/MAGICALPONY/${branchid}/g" -i \
          "/etc/apache2/sites-enabled/${branchid}.conf"
     hash=$(git log ${branchname} -1 --format='%H')
     {
@@ -123,7 +123,7 @@ popd
 
 echo
 echo '# apache2 restart'
-service apache2 restart
+/usr/sbin/service apache2 restart
 sleep 1
 
 echo
@@ -179,4 +179,4 @@ find /etc/apache2/sites-enabled -mtime +1
 find /etc/apache2/sites-enabled -mtime +1 -delete
 echo
 echo '# apache2 restart'
-service apache2 restart
+/usr/sbin/service apache2 restart
