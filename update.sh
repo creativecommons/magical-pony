@@ -33,19 +33,73 @@ echo '<!DOCTYPE html>
   <head>
     <meta charset="utf-8">
     <title>Updating the Magical Pony</title>
+    <style>
+      div {
+        background-color:lightgray;
+        margin:1em;
+        padding:1em;
+      }
+      h2 {
+        clear:both;
+      }
+      h3 {
+        margin-top:0;
+      }
+      img {
+        float:right;
+      }
+      td, th {
+        padding-top:1em;
+        text-align:left;
+        vertical-align:top;
+      }
+      .example-lavender {
+        background-color:black;
+        color:lavender;
+      }
+      .example-salmon {
+        background-color:black;
+        color:salmon;
+      }
+      .mono {
+        font-family:monospace;
+      }
+      .red {
+        color:red;
+      }
+      .run-success {
+        background-color:lavender
+      }
+      .run-error {
+        background-color:salmon
+      }
+      .smaller {
+        font-size:smaller;
+      }
+    </style>
   </head>
-  <body style="background-color:lavender; font-family:monospace;">
-    <h1>Updating the Magical Pony</h1>
-    <p>
+  <body class="run-error">
+    <h1>Updating the Magical Pony</h1>' > "${statusfile}"
+now_utc=$(date -u '+%A %F %T %:::z %Z')
+now_bst=$(date '+%A %F %T %:::z %Z')
+echo "    <h2>${now_utc}</h2>" >> "${statusfile}"
+sed -e's/^/    /' ${resourcedir}/pony.img.html >> "${statusfile}"
+echo "    <p class=\"smaller;\">(${now_bst})</p>" >> "${statusfile}"
+echo '    <p>
       <a href="https://github.com/creativecommons/magical-pony">
         https://github.com/creativecommons/magical-pony
       </a>
-    </p>' > "${statusfile}"
-echo "    <h2>$(date -u '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
-echo "      <p>($(date '+%A %F %T %:::z %Z'))</p>" >> "${statusfile}"
-sed -e's/^/    /' ${resourcedir}/pony.img.html >> "${statusfile}"
+    </p>
+    <p class="smaller">
+      On an incomplete or error completion, this page will have a
+      <span class="example-salmon">[ SALMON ]</span> background.
+    </p>
+    <p class="smaller">
+      On successful completion, this page will have a
+      <span class="example-lavender">[ LAVENDER ]</span> background.
+    </p>' >> "${statusfile}"
 
-pushd "${checkoutdir}"
+pushd "${checkoutdir}" > /dev/null
 echo
 
 echo "# git clone ${repo}"
@@ -62,13 +116,17 @@ do
     if [[ -n "${branchid//[-.[:alnum:]]/}" ]]
     then
         {
-            echo '    <hr>'
-            echo "    <h3 style=\"color:red;\">${branchid}</h3>"
-            echo "    <p style=\"color:red;\"> (${branchname})</p>"
-            echo -n "    <p style=\"color:red;\">The branchid (${branchid}) is"
-            echo ' not a valid DNS domain name</p>'
-            echo -n '    <p style=\"color:red;\"><strong>SKIPPING DEPLOYMENT'
+            echo '    <div>'
+            echo '      <hr>'
+            echo "      <h3 style=\"color:red;\">${branchid}</h3>"
+            echo '      <p class="redsmaller">'
+            echo "        (<span class=\"mono\">${branchname}</span>)"
+            echo '      </p>'
+            echo -n "      <p style=\"color:red;\">The branchid (${branchid})"
+            echo ' is not a valid DNS domain name</p>'
+            echo -n '      <p style=\"color:red;\"><strong>SKIPPING DEPLOYMENT'
             echo '</strong></p>'
+            echo '    </div>'
             echo
         } >> "${statusfile}"
         continue
@@ -96,30 +154,39 @@ do
     sed -e"s/MAGICALPONY/${branchid}/g" -i \
          "/etc/apache2/sites-enabled/${branchid}.conf"
     hash=$(git log ${branchname} -1 --format='%H')
+    repo_url='https://github.com/creativecommons/creativecommons.org'
+    hash_url="${repo_url}/commit/${hash}"
     {
-        echo '    <hr>'
-        echo "    <h3>${branchid}</h3>"
-        echo "    <p>(${branchname})</p>"
-        echo '    <h4>Test Domain</h4>'
-        echo '    <p>'
-        echo "      <a href=\"https://${domain}/\">"
-        echo "        ${domain}"
-        echo '      </a>'
-        echo '    </p>'
-        echo '    <h4>Commit</h4>'
-        echo '    <p>'
-        echo "      <a href=\"https://github.com/creativecommons/creativecommons.org/commit/${hash}\">"
-        echo "        ${hash}"
-        echo "      </a>"
-        echo '    </p>'
+        echo '    <div>'
+        echo "      <h3>${branchid}</h3>"
+        echo '      <p class="smaller">'
+        echo "        (<span class=\"mono\">${branchname}</span>)"
+        echo '      </p>'
+        echo '      <table>'
+        echo '        <tr>'
+        echo '          <th>Test Domain:</th>'
+        echo "          <td><a href=\"https://${domain}/\">${domain}</a></td>"
+        echo '        </tr>'
+        echo '        <tr>'
+        echo '          <th>Commit:</th>'
+        echo '          <td>'
+        echo "            <a class=\"mono\" href=\"${hash_url}\">${hash}</a>"
+        echo '            <br>'
     } >> "${statusfile}"
-    git log ${branchname} -1 --format='    <p>%s</p>' >> "${statusfile}"
-    echo >> "${statusfile}"
+    git log ${branchname} -1 --format='          %s' \
+        >> "${statusfile}"
+    {
+        echo '          </td>'
+        echo '        </tr>'
+        echo '      </table>'
+        echo '    </div>'
+        echo
+    }  >> "${statusfile}"
     echo
 done
 echo '    <hr>' >> "${statusfile}"
 
-popd
+popd > /dev/null
 
 echo
 echo '# apache2 restart'
@@ -151,13 +218,17 @@ else
         echo '    <h2>certbot ERROR</h2>'
         echo '    <p>See:'
         echo '        <pre>/var/log/letsencrypt/letsencrypt.log</pre>'
+        echo '        <pre>/var/log/magical-pony</pre>'
+        echo '        <pre>/var/log/mail/mail</pre>'
         echo '    </p>'
     } >> "${statusfile}"
 fi
 echo
 
-echo "    <h2>$(date -u '+%A %F %T %:::z %Z')</h2>" >> "${statusfile}"
-echo "      <p>($(date '+%A %F %T %:::z %Z'))</p>" >> "${statusfile}"
+now_utc=$(date -u '+%A %F %T %:::z %Z')
+now_bst=$(date '+%A %F %T %:::z %Z')
+echo "    <h3>${now_utc}</h3>" >> "${statusfile}"
+echo "    <p class=\"smaller;\">(${now_bst})</p>" >> "${statusfile}"
 echo '  </body>' >> "${statusfile}"
 echo '</html>' >> "${statusfile}"
 
@@ -178,5 +249,8 @@ echo '# Clean-up: /etc/apache2/sites-enabled/'
 find /etc/apache2/sites-enabled -mtime +1
 find /etc/apache2/sites-enabled -mtime +1 -delete
 echo
+
 echo '# apache2 restart'
 /usr/sbin/service apache2 restart
+
+sed -e's/"run-error"/"run-success"/' -i "${statusfile}"
