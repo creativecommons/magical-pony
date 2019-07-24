@@ -35,7 +35,7 @@ echo '<!DOCTYPE html>
     <title>Updating the Magical Pony</title>
     <style>
       div {
-        background-color:lightgray;
+        background-color:white;
         margin:1em;
         padding:1em;
       }
