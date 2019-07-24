@@ -32,6 +32,9 @@ echo '<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Updating the Magical Pony</title>
     <style>
       div {
@@ -78,12 +81,12 @@ echo '<!DOCTYPE html>
       }
     </style>
   </head>
-  <body class="run-error">
-    <h1>Updating the Magical Pony</h1>' > "${statusfile}"
+  <body class="run-error">' > "${statusfile}"
+sed -e's/^/    /' ${resourcedir}/pony.img.html >> "${statusfile}"
+echo '    <h1>Updating the Magical Pony</h1>' >> "${statusfile}"
 now_utc=$(date -u '+%A %F %T %:::z %Z')
 now_bst=$(date '+%A %F %T %:::z %Z')
 echo "    <h2>${now_utc}</h2>" >> "${statusfile}"
-sed -e's/^/    /' ${resourcedir}/pony.img.html >> "${statusfile}"
 echo "    <p class=\"smaller;\">(${now_bst})</p>" >> "${statusfile}"
 echo '    <p>
       <a href="https://github.com/creativecommons/magical-pony">
