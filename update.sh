@@ -39,30 +39,34 @@ echo '<!DOCTYPE html>
     <style>
       div {
         background-color:white;
-        margin:1em;
-        padding:1em;
+        padding:0.5em;
       }
       h3 {
         margin-top:0;
       }
       img {
         float:right;
+        max-width:400px;
       }
       td, th {
         padding-top:1em;
         text-align:left;
         vertical-align:top;
       }
+      .branch {
+        margin:1em;
+      }
       .clear {
         clear:both;
       }
-      .example-lavender {
-        background-color:black;
-        color:lavender;
+      .example {
+        max-width:70ex;
       }
-      .example-salmon {
-        background-color:black;
-        color:salmon;
+      .ex-lavender {
+        background-color:lavender;
+      }
+      .ex-salmon {
+        background-color:salmon;
       }
       .mono {
         font-family:monospace;
@@ -93,14 +97,16 @@ echo '    <p>
         https://github.com/creativecommons/magical-pony
       </a>
     </p>
-    <p class="smaller">
-      On an incomplete or error completion, this page will have a
-      <span class="example-salmon">[ SALMON ]</span> background.
-    </p>
-    <p class="smaller">
-      On successful completion, this page will have a
-      <span class="example-lavender">[ LAVENDER ]</span> background.
-    </p>' >> "${statusfile}"
+    <div class="example smaller">
+      <p>
+        On an incomplete or error completion, this page will have a
+        <span class="ex-salmon">&nbsp;salmon&nbsp;background&nbsp;</span>.
+      </p>
+      <p>
+        On successful completion, this page will have a
+        <span class="ex-lavender">&nbsp;lavender&nbsp;background&nbsp;</span>.
+      </p>
+    </div>' >> "${statusfile}"
 
 pushd "${checkoutdir}" > /dev/null
 echo
@@ -119,7 +125,7 @@ do
     if [[ -n "${branchid//[-.[:alnum:]]/}" ]]
     then
         {
-            echo '    <div>'
+            echo '    <div class="branch">'
             echo '      <hr>'
             echo "      <h3 style=\"color:red;\">${branchid}</h3>"
             echo '      <p class="redsmaller">'
@@ -160,7 +166,7 @@ do
     repo_url='https://github.com/creativecommons/creativecommons.org'
     hash_url="${repo_url}/commit/${hash}"
     {
-        echo '    <div>'
+        echo '    <div class="branch">'
         echo "      <h3>${branchid}</h3>"
         echo '      <p class="smaller">'
         echo "        (<span class=\"mono\">${branchname}</span>)"
