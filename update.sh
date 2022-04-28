@@ -118,7 +118,7 @@ echo
 
 echo '    <h2 class="clear">Branches</h2>' >> "${statusfile}"
 
-for branchname in $(git branch -r | grep -v 'HEAD\|master')
+for branchname in $(git branch -r | grep -v 'HEAD\|main')
 do
     echo "# ${branchname}"
     branchid="${branchname##*/}"
