@@ -23,6 +23,7 @@ checkoutdir="${workdir}/${reponame}"
 resourcedir="${workdir}/magical-pony"
 statusfile='/var/www/html/index.html'
 certbotargs='-w /var/www/html -d legal.creativecommons.org'
+no_errors=1
 
 rm -rf "${checkoutdir}"
 
@@ -120,6 +121,10 @@ echo '    <h2 class="clear">Branches</h2>' >> "${statusfile}"
 
 for branchname in $(git branch -r | grep -v 'HEAD\|main')
 do
+    if [[ "${branchname}" == 'origin/staging' ]]
+    then
+        continue
+    fi
     echo "# ${branchname}"
     branchid="${branchname##*/}"
     if [[ -n "${branchid//[-.[:alnum:]]/}" ]]
@@ -200,16 +205,19 @@ echo
 echo '# apache2 restart'
 /usr/sbin/service apache2 restart
 sleep 1
+echo
 
 echo
 echo '# cerbotargs:'
 echo "${certbotargs}"
 echo
+
+echo
 echo '# run cerbot'
 echo
 # Get any new certificates, incorporate old one, refresh expiring, install any
 # new http->https redirects, and do so automatically.
-if /usr/bin/certbot \
+if /snap/bin/certbot \
     --agree-tos -m webmaster@creativecommons.org \
     --non-interactive \
     --cert-name legal.creativecommons.org \
@@ -222,8 +230,10 @@ if /usr/bin/certbot \
 then
     echo '    <h2>And we are done!</h2>' >> "${statusfile}"
 else
+    es=${?}
+    no_errors=0
     {
-        echo '    <h2>certbot ERROR</h2>'
+        echo "    <h2>certbot ERROR (exit status <code>${es}</code>)</h2>"
         echo '    <p>See:'
         echo '        <pre>/var/log/letsencrypt/letsencrypt.log</pre>'
         echo '        <pre>/var/log/magical-pony</pre>'
@@ -261,4 +271,7 @@ echo
 echo '# apache2 restart'
 /usr/sbin/service apache2 restart
 
-sed -e's/"run-error"/"run-success"/' -i "${statusfile}"
+if [[ ${no_errors} == 1 ]]
+then
+    sed -e's/"run-error"/"run-success"/' -i "${statusfile}"
+fi
